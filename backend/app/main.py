@@ -55,12 +55,17 @@ async def transcribe(file: UploadFile = File(...)):
             # Convertir la respuesta a voz
             audio_response_path = text_to_speech(bot_response)
             
+            # Devolver tanto el texto como el archivo de audio
             return {
                 "text": {
                     "user_input": transcription,
                     "bot_response": bot_response
                 },
-                "audio_response": audio_response_path
+                "audio": FileResponse(
+                    audio_response_path,
+                    media_type="audio/mpeg",
+                    filename=f"response_{os.path.basename(audio_response_path)}"
+                )
             }
             
         except Exception as e:
@@ -72,17 +77,3 @@ async def transcribe(file: UploadFile = File(...)):
                 
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error al procesar el archivo: {str(e)}")
-
-@app.get("/audio/{filename}")
-async def get_audio(filename: str):
-    try:
-        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        audio_path = os.path.join(base_dir, "test_audios", "responses", filename)
-        
-        if not os.path.exists(audio_path):
-            raise HTTPException(status_code=404, detail="Archivo de audio no encontrado")
-            
-        return FileResponse(audio_path, media_type="audio/mpeg")
-        
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error al obtener el archivo de audio: {str(e)}")

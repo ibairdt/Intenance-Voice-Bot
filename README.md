@@ -19,6 +19,8 @@ Endpoint sirve los archivos de audio generados. permite reproducir la respuesta 
 
 ## Flujo para bot de asistencia
 
+![image](./assets/flujo_trabajo_api.png)
+
 1. El usuario graba su voz
 2. Se envía el audio al endpoint /transcribe
 3. El bot transcribe lo que ha dicho el usuario, genera una respuesta y convierte esa respuesta a voz
